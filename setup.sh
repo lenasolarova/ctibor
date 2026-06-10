@@ -3,10 +3,8 @@ set -e
 
 echo "obsint-processing-ai-bot-instance" > /home/botuser/app/.instance-id
 
-# Instance-specific packages go here:
-# dnf install -y --nodocs <package>
-# pip3.12 install <package>
-# npm install -g <package>
+# Instance-specific packages
+pip3.12 install pyyaml
 
 # Syft installation
 echo "Installing syft..."
