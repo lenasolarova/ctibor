@@ -35,6 +35,14 @@ parameters:
   required: true
 - name: SLACK_WEBHOOK_URL
   value: ""
+- name: KEDA_ENABLED
+  value: "false"
+- name: KEDA_TIMEZONE
+  value: "Europe/Prague"
+- name: KEDA_CRON_START
+  value: "0 9 * * 1-5"
+- name: KEDA_CRON_END
+  value: "0 10 * * 1-5"
 objects:
 
 # ============================================================================
@@ -238,3 +246,28 @@ objects:
         protocol: UDP
       - port: 5353
         protocol: TCP
+
+# --- KEDA Cron Scaler (optional — set KEDA_ENABLED=true to activate) ---
+- apiVersion: keda.sh/v1alpha1
+  kind: ScaledObject
+  metadata:
+    name: ${BOT_NAME}-cron-scaler
+    labels:
+      app.kubernetes.io/name: ${BOT_NAME}
+      app.kubernetes.io/part-of: devbot
+    annotations:
+      keda-enabled: ${KEDA_ENABLED}
+  spec:
+    scaleTargetRef:
+      apiVersion: apps/v1
+      kind: Deployment
+      name: ${BOT_NAME}
+    minReplicaCount: 0
+    maxReplicaCount: 1
+    triggers:
+    - type: cron
+      metadata:
+        timezone: ${KEDA_TIMEZONE}
+        start: ${KEDA_CRON_START}
+        end: ${KEDA_CRON_END}
+        desiredReplicas: "1"
