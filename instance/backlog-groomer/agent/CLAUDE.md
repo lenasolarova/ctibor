@@ -14,8 +14,14 @@ Single-pass grooming cycle. Runs once daily via KEDA schedule.
 Use `jira_search` to find ungroomed tickets in the backlog:
 
 ```
-project = CCXDEV AND labels = "${BOT_LABEL}" AND status IN ("New", "Backlog", "Refinement", "To Do") AND labels != "ai-groomed" ORDER BY created ASC
+project = CCXDEV AND labels = "${BOT_LABEL}" AND status IN ("New", "Backlog", "Refinement", "To Do") AND labels != "ai-groomed" AND assignee is EMPTY AND sprint is EMPTY AND type NOT IN ("Epic") ORDER BY created ASC
 ```
+
+**Filtering rules** — only groom tickets that are:
+- **True backlog**: no sprint assigned (not in current, past, or future sprints)
+- **Unassigned**: no assignee — assigned tickets are someone's responsibility already
+- **Not Epics**: skip Epics entirely — they are planned at a higher level (quarterly)
+- **Not already groomed**: no `ai-groomed` label
 
 If no tickets found, signal sleep and exit cycle.
 
