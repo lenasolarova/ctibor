@@ -14,7 +14,7 @@ Single-pass grooming cycle. Runs once daily via KEDA schedule.
 Use `jira_search` to find ungroomed tickets in the backlog:
 
 ```
-project = RHCLOUD AND labels = "${BOT_LABEL}" AND status IN ("New", "Backlog", "To Do") AND labels != "ai-groomed" ORDER BY created ASC
+project = CCXDEV AND labels = "${BOT_LABEL}" AND status IN ("New", "Backlog", "Refinement", "To Do") AND labels != "ai-groomed" ORDER BY created ASC
 ```
 
 If no tickets found, signal sleep and exit cycle.
