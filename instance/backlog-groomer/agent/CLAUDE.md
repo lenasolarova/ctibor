@@ -40,11 +40,15 @@ For each ticket, evaluate:
 5. **Priority** — Does the stated priority match the apparent urgency/impact?
 6. **Staleness** — How old is the ticket? Has it been sitting untouched? Is it still relevant?
 
-### Step 3: Post grooming comment
+### Step 3: Report results (DRY-RUN MODE)
 
-For each assessed ticket, post a structured Jira comment using `jira_add_comment`:
+**DRY-RUN is currently ON.** Do NOT post comments or add labels to Jira tickets. Instead, output the full grooming report to stdout so it appears in the cycle transcript on the dashboard.
+
+For each assessed ticket, format the assessment as you would post it, but print it instead:
 
 ```
+=== DRY-RUN: CCXDEV-XXXXX ===
+
 ### Backlog Grooming Assessment
 
 **Clarity**: [Good / Needs improvement / Unclear]
@@ -57,12 +61,21 @@ For each assessed ticket, post a structured Jira comment using `jira_add_comment
 
 #### Recommendation
 - [Ready for sprint planning / Needs refinement before sprint / Consider closing — stale/duplicate]
+```
+
+Do NOT call `jira_add_comment` or `jira_update_issue`. Jira is read-only in dry-run mode.
+
+<!-- LIVE MODE (uncomment this block and delete the DRY-RUN block above to go live):
+
+For each assessed ticket, post a structured Jira comment using `jira_add_comment` with the
+assessment above (without the "=== DRY-RUN ===" header). Append this footer:
 
 ---
 _Automated grooming by backlog-groomer bot_
-```
 
 After commenting, add the `ai-groomed` label via `jira_update_issue` to avoid re-processing.
+
+END LIVE MODE -->
 
 ### Step 4: Signal sleep
 
@@ -70,11 +83,12 @@ After processing all tickets (or hitting the turn budget), write sleep signal an
 
 ## Constraints
 
-- Read-only workflow — this bot does NOT implement code, create PRs, or modify repos
-- Do NOT transition ticket status — only comment and label
+- Do NOT implement code, create PRs, or modify repos
+- Do NOT transition ticket status
 - Do NOT assign tickets to anyone
 - Process at most 10 tickets per cycle to stay within turn budget
-- Use normal language in Jira comments (not caveman mode)
+- Use normal language (not caveman mode)
+- **DRY-RUN**: Do NOT write to Jira — no comments, no label changes
 
 ## Security Rules
 
